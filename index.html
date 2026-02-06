@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LeadQualify Pro - iOS Style</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #F2F2F7; /* iOS System Gray 6 */
+            --card-bg: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --accent: #000000; /* Minimalist Black */
+            --danger: #FF3B30;
+            --success: #34C759;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --anim-speed: 0.4s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Prevenir scroll global */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenedor tipo App Móvil */
+        .app-container {
+            width: 100%;
+            max-width: 500px; /* Ancho máximo tipo móvil en desktop */
+            height: 100%;
+            background-color: var(--bg-color);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        /* Header Fijo */
+        header {
+            padding: 20px 24px 10px;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Barra de progreso minimalista */
+        .progress-container {
+            height: 4px;
+            background: #E5E5EA;
+            border-radius: 2px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 20%;
+            transition: width var(--anim-speed) ease;
+            border-radius: 2px;
+        }
+
+        .step-indicator {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* Área de Contenido Principal */
+        main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .steps-wrapper {
+            display: flex;
+            width: 500%; /* 5 pasos */
+            height: 100%;
+            transition: transform var(--anim-speed) cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .step-content {
+            width: 20%; /* 100% / 5 */
+            height: 100%;
+            padding: 10px 24px 100px 24px; /* Padding bottom para no tapar botones */
+            overflow-y: auto; /* Scroll interno solo si es necesario */
+            overflow-x: hidden;
+            /* Ocultar barra de scroll estéticamente */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .step-content::-webkit-scrollbar { display: none; }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        /* Componentes de Formulario estilo iOS */
+        .form-group {
+            margin-bottom: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-wrapper:focus-within {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        textarea { resize: none; }
+
+        /* Tarjetas de Selección (Checkbox/Radio Replacement) */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .selection-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .selection-card.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .selection-card i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .selection-card span {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Slider Personalizado */
+        .budget-container {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .budget-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #E5E5EA;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Urgency Badges */
+        .urgency-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .urgency-option {
+            padding: 18px;
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .urgency-option.selected {
+            background: var(--text-primary);
+            color: white;
+        }
+        
+        .urgency-option.high.selected { background: #FF3B30; }
+        .urgency-option.medium.selected { background: #FF9500; }
+        .urgency-option.low.selected { background: #34C759; }
+
+        /* Calendario iOS Style */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--radius-lg);
+        }
+
+        .cal-head {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .cal-day.today { color: var(--accent); font-weight: 800; }
+        .cal-day:hover { background: #F2F2F7; }
+        .cal-day.selected {
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+        }
+        .cal-day.disabled { opacity: 0.3; pointer-events: none; }
+
+        /* Footer de Navegación */
+        footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            z-index: 200;
+        }
+
+        .btn {
+            flex: 1;
+            height: 56px;
+            border: none;
+            border-radius: 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:active { transform: scale(0.96); }
+
+        .btn-secondary {
+            background: #E5E5EA;
+            color: var(--text-primary);
+            flex: 0.4; /* Botón atrás más pequeño */
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Resultados */
+        .result-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 8px solid var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 20px;
+            background: white;
+            position: relative;
+        }
+        
+        .score-svg {
+            position: absolute;
+            top: -8px; left: -8px;
+            width: 100px; height: 100px;
+            transform: rotate(-90deg);
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .hot { background: #FFEBEE; color: #D32F2F; }
+        .warm { background: #FFF3E0; color: #F57C00; }
+        .cold { background: #E8F5E9; color: #388E3C; }
+
+        .error-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(255, 59, 48, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            width: 90%;
+            max-width: 400px;
+            justify-content: center;
+        }
+        
+        .error-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Ocultar elementos nativos */
+        input[type="radio"], input[type="checkbox"] {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Detalles Result (Compacto) */
+        .summary-grid {
+            text-align: left;
+            margin-top: 20px;
+            background: #F9F9F9;
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-label { color: var(--text-secondary); }
+        .summary-val { font-weight: 600; }
+
+    </style>
+</head>
+<body>
+
+    <div class="error-toast" id="error-toast">
+        <i class="fas fa-exclamation-circle"></i> <span id="error-msg">Error</span>
+    </div>
+
+    <div class="app-container">
+        <header>
+            <div class="header-top">
+                <div class="logo">
+                    <i class="fas fa-home"></i> LeadQualify
+                </div>
+                <div class="step-indicator">Paso <span id="step-num">1</span> de 5</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </header>
+
+        <main>
+            <div class="steps-wrapper" id="steps-wrapper">
+                
+                <div class="step-content">
+                    <h2>¿Quién eres?</h2>
+                    
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="name" placeholder="Tu nombre y apellido">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="email" placeholder="nombre@ejemplo.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono Móvil</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="phone" placeholder="+34 600 000 000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ubicación Actual</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="location" placeholder="Ciudad de residencia">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>¿Cómo nos conociste?</label>
+                        <div class="input-wrapper">
+                            <select id="source">
+                                <option value="">Seleccionar...</option>
+                                <option value="portal">Portal inmobiliario</option>
+                                <option value="recomendacion">Recomendación</option>
+                                <option value="redes">Redes sociales</option>
+                                <option value="busqueda">Google</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content">
+                    <h2>Tu búsqueda</h2>
+                    
+                    <div class="form-group">
+                        <label>¿Qué buscas? (Selección múltiple)</label>
+                        <div class="selection-grid">
+                            <div class="selection-card" onclick="toggleCheckbox(this, 'apartment')">
+                                <i class="far fa-building"></i>
+                                <span>Piso</span>
+                            </div>
+                            <div class="selection-card" onclick="toggleCheckbox(this, 'house')">
+                                <i class="fas fa-home"></i>
+                                <span>Casa</span>
+                            </div>
+                            <div class="selection-card" onclick="toggleCheckbox(this, 'penthouse')">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Ático</span>
+                            </div>
+                            <div class="selection-card" onclick="toggleCheckbox(this, 'commercial')">
+                                <i class="fas fa-store"></i>
+                                <span>Local</span>
+                            </div>
+                        </div>
+                        <div style="display:none;">
+                            <input type="checkbox" id="apartment" name="property-type" value="apartment">
+                            <input type="checkbox" id="house" name="property-type" value="house">
+                            <input type="checkbox" id="penthouse" name="property-type" value="penthouse">
+                            <input type="checkbox" id="commercial" name="property-type" value="commercial">
+                            <input type="checkbox" id="office" name="property-type" value="office">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Operación</label>
+                        <div class="selection-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="selection-card radio-option" data-group="operation" data-val="buy" onclick="selectRadio(this, 'operation', 'buy')">
+                                <span>Compra</span>
+                            </div>
+                            <div class="selection-card radio-option" data-group="operation" data-val="rent" onclick="selectRadio(this, 'operation', 'rent')">
+                                <span>Alquiler</span>
+                            </div>
+                            <div class="selection-card radio-option" data-group="operation" data-val="not-sure" onclick="selectRadio(this, 'operation', 'not-sure')">
+                                <span>Duda</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected-operation">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Habitaciones</label>
+                        <div class="input-wrapper">
+                            <select id="bedrooms">
+                                <option value="">Cualquiera</option>
+                                <option value="1">1 Habitación</option>
+                                <option value="2">2 Habitaciones</option>
+                                <option value="3">3 Habitaciones</option>
+                                <option value="4">+4 Habitaciones</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Presupuesto Máximo</label>
+                        <div class="budget-container">
+                            <div class="budget-display">€<span id="budget-value">250.000</span></div>
+                            <input type="range" id="budget" min="50000" max="1000000" step="5000" value="250000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nivel de Urgencia</label>
+                        <div class="urgency-stack">
+                            <div class="urgency-option high" onclick="selectUrgency(this, 'high')">
+                                <span>Alta (1-3 meses)</span>
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="urgency-option medium" onclick="selectUrgency(this, 'medium')">
+                                <span>Media (3-6 meses)</span>
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="urgency-option low" onclick="selectUrgency(this, 'low')">
+                                <span>Baja (+6 meses)</span>
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                        </div>
+                        <input type="hidden" id="urgency">
+                    </div>
+                </div>
+
+                <div class="step-content">
+                    <h2>Financiero</h2>
+                    
+                    <div class="form-group">
+                        <label>Estado Financiero</label>
+                        <div class="urgency-stack"> <div class="selection-card radio-option" style="text-align:left; display:flex; padding:15px;" data-group="financing" data-val="approved" onclick="selectRadio(this, 'financing', 'approved')">
+                                <i class="fas fa-check-circle" style="margin-right:10px; color:var(--success)"></i>
+                                <span>Crédito Aprobado</span>
+                            </div>
+                            <div class="selection-card radio-option" style="text-align:left; display:flex; padding:15px;" data-group="financing" data-val="process" onclick="selectRadio(this, 'financing', 'process')">
+                                <i class="fas fa-spinner" style="margin-right:10px; color:#FF9500"></i>
+                                <span>En trámite</span>
+                            </div>
+                            <div class="selection-card radio-option" style="text-align:left; display:flex; padding:15px;" data-group="financing" data-val="none" onclick="selectRadio(this, 'financing', 'none')">
+                                <i class="fas fa-times-circle" style="margin-right:10px; color:#FF3B30"></i>
+                                <span>Sin financiamiento</span>
+                            </div>
+                            <div class="selection-card radio-option" style="text-align:left; display:flex; padding:15px;" data-group="financing" data-val="cash" onclick="selectRadio(this, 'financing', 'cash')">
+                                <i class="fas fa-money-bill-wave" style="margin-right:10px; color:var(--success)"></i>
+                                <span>Pago al contado</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected-financing">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Propósito</label>
+                        <div class="selection-grid">
+                            <div class="selection-card radio-option" data-group="investment" data-val="no" onclick="selectRadio(this, 'investment', 'no')">
+                                <span>Vivir</span>
+                            </div>
+                            <div class="selection-card radio-option" data-group="investment" data-val="yes" onclick="selectRadio(this, 'investment', 'yes')">
+                                <span>Inversión</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected-investment">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Experiencia</label>
+                        <div class="input-wrapper">
+                            <select id="previous-visits">
+                                <option value="none">Primera vez</option>
+                                <option value="few">He visto algunas</option>
+                                <option value="many">He visto muchas</option>
+                                <option value="professional">Inversionista experto</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notas Adicionales</label>
+                        <div class="input-wrapper">
+                            <textarea id="notes" rows="4" placeholder="Preferencias, zonas, requisitos..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content">
+                    <h2>Agenda tu visita</h2>
+                    
+                    <div class="form-group">
+                        <label>Modalidad</label>
+                        <div class="selection-grid">
+                            <div class="selection-card radio-option" data-group="visit-type" data-val="in-person" onclick="selectRadio(this, 'visit-type', 'in-person')">
+                                <i class="fas fa-user-check"></i>
+                                <span>Presencial</span>
+                            </div>
+                            <div class="selection-card radio-option" data-group="visit-type" data-val="virtual" onclick="selectRadio(this, 'visit-type', 'virtual')">
+                                <i class="fas fa-video"></i>
+                                <span>Virtual</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selected-visit-type">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Selecciona un día</label>
+                        <div class="calendar-grid" id="calendar">
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Horario Preferido</label>
+                        <div class="input-wrapper">
+                            <select id="preferred-time">
+                                <option value="">Seleccionar hora...</option>
+                                <option value="morning">Mañana (9:00 - 12:00)</option>
+                                <option value="afternoon">Tarde (12:00 - 17:00)</option>
+                                <option value="evening">Noche (17:00 - 20:00)</option>
+                                <option value="flexible">Indiferente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content">
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div class="score-circle">
+                            <span id="final-score">0</span>
+                        </div>
+                        <h2 style="margin-bottom:10px;">¡Recibido!</h2>
+                        <div id="final-category-badge" class="category-badge">Calculando...</div>
+                        <p style="color:var(--text-secondary); line-height:1.5; margin-bottom:20px;" id="results-message">
+                            Procesando tu solicitud...
+                        </p>
+                    </div>
+
+                    <div class="summary-grid">
+                        <div class="summary-row">
+                            <span class="summary-label">Cliente</span>
+                            <span class="summary-val" id="summary-name">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Presupuesto</span>
+                            <span class="summary-val" id="summary-budget">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Operación</span>
+                            <span class="summary-val" id="summary-operation">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Referencia</span>
+                            <span class="summary-val" style="font-family:monospace; font-size:0.8rem;" id="summary-reference">-</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <p style="font-size: 0.8rem; color: #999;">Revisa tu correo para más detalles.</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <footer>
+            <button class="btn btn-secondary" id="btn-prev" onclick="prevStep()" style="opacity:0; pointer-events:none;">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button class="btn btn-primary" id="btn-next" onclick="nextStep()">
+                Continuar
+            </button>
+            <button class="btn btn-success" id="btn-submit" onclick="submitForm()" style="display:none;">
+                Confirmar Solicitud
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // --- LOGIC PORTED FROM ORIGINAL ---
+        let currentStep = 1;
+        const totalSteps = 5;
+        const formData = {
+            name: '', email: '', phone: '', location: '', source: '',
+            propertyTypes: [], operation: '', bedrooms: '', budget: 250000,
+            urgency: '', financing: '', investment: '', previousVisits: '',
+            notes: '', visitType: '', visitDay: '', preferredTime: '',
+            score: 0, category: ''
+        };
+
+        // UI Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+            generateCalendar();
+            
+            // Slider Listener
+            const slider = document.getElementById('budget');
+            slider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                document.getElementById('budget-value').textContent = val.toLocaleString('es-ES');
+                formData.budget = val;
+                calculateScore(); // Real-time scoring
+            });
+        });
+
+        // --- NAVIGATION & UI FUNCTIONS ---
+
+        function updateUI() {
+            // Update Progress Bar
+            const percentage = ((currentStep) / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('step-num').textContent = currentStep;
+
+            // Slide Wrapper
+            const wrapper = document.getElementById('steps-wrapper');
+            wrapper.style.transform = `translateX(-${(currentStep - 1) * 20}%)`;
+
+            // Buttons Logic
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            if (currentStep === 1) {
+                btnPrev.style.opacity = '0';
+                btnPrev.style.pointerEvents = 'none';
+            } else {
+                btnPrev.style.opacity = '1';
+                btnPrev.style.pointerEvents = 'auto';
+            }
+
+            if (currentStep === totalSteps) {
+                // Should not happen via nav but just in case
+            } else if (currentStep === totalSteps - 1) {
+                btnNext.style.display = 'none';
+                btnSubmit.style.display = 'flex';
+                btnSubmit.style.flex = '1';
+            } else {
+                btnNext.style.display = 'flex';
+                btnSubmit.style.display = 'none';
+            }
+        }
+
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                currentStep++;
+                updateUI();
+                if (currentStep === 5) showSummary();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // --- CUSTOM INPUT HANDLERS (App Feel) ---
+
+        function toggleCheckbox(element, value) {
+            element.classList.toggle('selected');
+            const realCheckbox = document.getElementById(value);
+            if (realCheckbox) realCheckbox.checked = !realCheckbox.checked;
+            
+            // Logic Update
+            if (element.classList.contains('selected')) {
+                formData.propertyTypes.push(value);
+            } else {
+                formData.propertyTypes = formData.propertyTypes.filter(t => t !== value);
+            }
+            calculateScore();
+        }
+
+        function selectRadio(element, group, value) {
+            // UI Update
+            document.querySelectorAll(`.radio-option[data-group="${group}"]`).forEach(el => {
+                el.classList.remove('selected');
+                // Remove Icon color check/fix if needed
+            });
+            element.classList.add('selected');
+
+            // Logic Update
+            if (group === 'operation') formData.operation = value;
+            if (group === 'financing') formData.financing = value;
+            if (group === 'investment') formData.investment = value;
+            if (group === 'visit-type') formData.visitType = value;
+
+            // Update hidden input for validation checks
+            document.getElementById(`selected-${group}`).value = value;
+            
+            calculateScore();
+        }
+
+        function selectUrgency(element, level) {
+            document.querySelectorAll('.urgency-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            formData.urgency = level;
+            document.getElementById('urgency').value = level;
+            calculateScore();
+        }
+
+        // --- VALIDATION LOGIC (Ported) ---
+
+        function showToast(msg) {
+            const toast = document.getElementById('error-toast');
+            document.getElementById('error-msg').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+            
+            if (step === 1) {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!name) { showToast('Nombre requerido'); return false; }
+                if (!email || !emailRegex.test(email)) { showToast('Email inválido'); return false; }
+                if (!phone) { showToast('Teléfono requerido'); return false; }
+
+                formData.name = name;
+                formData.email = email;
+                formData.phone = phone;
+                formData.location = document.getElementById('location').value;
+                formData.source = document.getElementById('source').value;
+            }
+
+            if (step === 2) {
+                if (formData.propertyTypes.length === 0) { showToast('Selecciona un tipo de propiedad'); return false; }
+                if (!formData.operation) { showToast('Selecciona compra o alquiler'); return false; }
+                if (!formData.urgency) { showToast('Selecciona la urgencia'); return false; }
+                
+                formData.bedrooms = document.getElementById('bedrooms').value;
+            }
+
+            if (step === 3) {
+                if (!formData.financing) { showToast('Selecciona situación financiera'); return false; }
+                
+                formData.previousVisits = document.getElementById('previous-visits').value;
+                formData.notes = document.getElementById('notes').value;
+            }
+
+            if (step === 4) {
+                // Validation happens on Submit button for this step usually, but here we validate before visual transition or final submit
+                if (!formData.visitType) { showToast('Selecciona tipo de visita'); return false; }
+                if (!formData.visitDay) { showToast('Selecciona un día en el calendario'); return false; }
+                if (!document.getElementById('preferred-time').value) { showToast('Selecciona horario'); return false; }
+                
+                formData.preferredTime = document.getElementById('preferred-time').value;
+            }
+
+            return isValid;
+        }
+
+        // --- CALENDAR LOGIC ---
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const days = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+            
+            // Headers
+            days.forEach(d => {
+                const h = document.createElement('div');
+                h.className = 'cal-head';
+                h.textContent = d;
+                calendar.appendChild(h);
+            });
+
+            // Days
+            const today = new Date();
+            for (let i = 0; i < 14; i++) {
+                const date = new Date();
+                date.setDate(today.getDate() + i);
+                const dayEl = document.createElement('div');
+                dayEl.className = 'cal-day';
+                dayEl.textContent = date.getDate();
+                
+                if (i === 0) dayEl.classList.add('today');
+                if (date.getDay() === 0) {
+                    dayEl.classList.add('disabled');
+                } else {
+                    dayEl.onclick = function() {
+                        document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('selected'));
+                        this.classList.add('selected');
+                        formData.visitDay = date.toISOString().split('T')[0];
+                    }
+                }
+                calendar.appendChild(dayEl);
+            }
+        }
+
+        // --- SCORING ENGINE (Exact Logic) ---
+        function calculateScore() {
+            let score = 0;
+            // 1. Budget
+            if (formData.budget >= 50000 && formData.budget < 150000) score += 10;
+            else if (formData.budget >= 150000 && formData.budget < 300000) score += 20;
+            else if (formData.budget >= 300000) score += 25;
+            
+            // 2. Urgency
+            if (formData.urgency === 'high') score += 20;
+            else if (formData.urgency === 'medium') score += 15;
+            else if (formData.urgency === 'low') score += 5;
+            
+            // 3. Financing
+            if (formData.financing === 'approved' || formData.financing === 'cash') score += 25;
+            else if (formData.financing === 'process') score += 15;
+            else if (formData.financing === 'none') score += 5;
+            
+            // 4. Operation
+            if (formData.operation === 'buy') score += 10;
+            else if (formData.operation === 'rent') score += 8;
+            
+            // 5. Experience
+            if (formData.previousVisits === 'many' || formData.previousVisits === 'professional') score += 10;
+            else if (formData.previousVisits === 'few') score += 7;
+            else if (formData.previousVisits === 'none') score += 3;
+            
+            // 6. Notes
+            if (formData.notes && formData.notes.length > 20) score += 10;
+            else if (formData.notes && formData.notes.length > 0) score += 5;
+
+            // Extra for availability (projected)
+            if (formData.visitType === 'in-person') score += 5;
+
+            formData.score = Math.min(score, 100); // Cap at 100
+        }
+
+        // --- SUMMARY & SUBMIT ---
+        function showSummary() {
+            calculateScore(); // Final calc
+            
+            // Determine Category
+            let catText = '', catClass = '';
+            if (formData.score >= 70) {
+                formData.category = 'hot'; catClass = 'hot'; catText = 'HOT LEAD';
+                document.getElementById('results-message').innerHTML = 'Prioridad Alta. Un asesor te contactará en <strong>menos de 2 horas</strong>.';
+            } else if (formData.score >= 40) {
+                formData.category = 'warm'; catClass = 'warm'; catText = 'WARM LEAD';
+                document.getElementById('results-message').innerHTML = 'Interés medio. Te contactaremos en 24h.';
+            } else {
+                formData.category = 'cold'; catClass = 'cold'; catText = 'COLD LEAD';
+                document.getElementById('results-message').innerHTML = 'Gracias. Te enviaremos opciones por email.';
+            }
+
+            // Fill Data
+            document.getElementById('final-score').textContent = formData.score;
+            const badge = document.getElementById('final-category-badge');
+            badge.textContent = catText;
+            badge.className = `category-badge ${catClass}`;
+
+            document.getElementById('summary-name').textContent = formData.name;
+            document.getElementById('summary-budget').textContent = `€${formData.budget.toLocaleString()}`;
+            document.getElementById('summary-operation').textContent = formData.operation === 'buy' ? 'Compra' : 'Alquiler';
+            document.getElementById('summary-reference').textContent = `REF-${Date.now().toString().slice(-6)}`;
+        }
+
+        function submitForm() {
+            if (!validateStep(4)) return; // Validate step 4 just in case
+
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // Simulate API
+            setTimeout(() => {
+                currentStep++;
+                updateUI();
+                // Hide footer on success page
+                document.querySelector('footer').style.display = 'none';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
