@@ -39,6 +39,75 @@
             justify-content: center;
         }
 
+        /* --- PORTADA (LANDING) --- */
+        .landing-page {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 500;
+            background-color: #000;
+            transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+        
+        .landing-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1600596542815-22b4c10e6bf5?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.7;
+        }
+
+        .landing-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px 30px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
+        }
+
+        .landing-title {
+            color: white;
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            animation: slideUp 0.8s ease;
+        }
+
+        .landing-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            animation: slideUp 0.8s ease 0.1s backwards;
+        }
+
+        .start-btn {
+            background: white;
+            color: black;
+            border: none;
+            height: 60px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+            animation: slideUp 0.8s ease 0.2s backwards;
+        }
+        
+        .start-btn:active { transform: scale(0.95); }
+
+        .landing-page.hidden {
+            transform: translateY(-100%);
+        }
+
+        /* --- APP CONTAINER --- */
         .app-container {
             width: 100%;
             max-width: 500px;
@@ -59,13 +128,7 @@
             flex-shrink: 0;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .logo { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .progress-container { height: 4px; background: #E5E5EA; border-radius: 2px; width: 100%; overflow: hidden; margin-top: 10px; }
         .progress-bar { height: 100%; background: var(--accent); width: 20%; transition: width var(--anim-speed) ease; border-radius: 2px; }
@@ -81,6 +144,7 @@
         .step-content::-webkit-scrollbar { display: none; }
 
         h2 { font-size: 1.8rem; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); }
+        h3.section-title { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; margin: 20px 0 10px; letter-spacing: 1px; font-weight: 700; border-bottom: 1px solid #e5e5ea; padding-bottom: 5px;}
 
         /* INPUTS & FORMS */
         .form-group { margin-bottom: 24px; animation: fadeIn 0.5s ease; }
@@ -151,22 +215,30 @@
         .btn-primary { background: var(--accent); color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .btn-success { background: var(--success); color: white; }
 
-        /* RESULTS & SUMMARY */
-        .score-circle {
-            width: 100px; height: 100px; border-radius: 50%; border: 8px solid var(--bg-color);
-            display: flex; align-items: center; justify-content: center; font-size: 2rem;
-            font-weight: 800; margin: 0 auto 20px; background: white;
+        /* RESULTS & SUMMARY (REDISENADO) */
+        .success-icon {
+            font-size: 4rem; color: var(--success); margin-bottom: 20px; display: block;
         }
-        .category-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; margin-bottom: 15px; }
-        .hot { background: #FFEBEE; color: #D32F2F; }
-        .warm { background: #FFF3E0; color: #F57C00; }
-        .cold { background: #E8F5E9; color: #388E3C; }
+        
+        .detailed-summary {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
 
-        .summary-grid { text-align: left; margin-top: 20px; background: #F9F9F9; border-radius: 12px; padding: 15px; }
-        .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        .summary-row:last-child { border-bottom: none; }
-        .summary-label { color: var(--text-secondary); }
-        .summary-val { font-weight: 600; text-align: right; }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
+        .s-label { color: var(--text-secondary); font-weight: 500; }
+        .s-value { font-weight: 600; color: var(--text-primary); text-align: right; max-width: 60%; }
 
         /* TOAST ERROR */
         .error-toast {
@@ -178,10 +250,23 @@
         .error-toast.show { transform: translateX(-50%) translateY(0); }
 
         input[type="radio"], input[type="checkbox"] { display: none; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <div class="landing-page" id="landing-page">
+        <div class="landing-bg"></div>
+        <div class="landing-content">
+            <h1 class="landing-title">Encuentra Tu<br>Hogar Ideal</h1>
+            <p class="landing-subtitle">Responde unas breves preguntas y nuestros expertos encontrarán la propiedad perfecta para ti.</p>
+            <button class="start-btn" onclick="startApp()">
+                Comenzar Ahora <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
 
     <div class="error-toast" id="error-toast">
         <i class="fas fa-exclamation-circle"></i> <span id="error-msg">Error</span>
@@ -236,7 +321,7 @@
                 <div class="step-content">
                     <h2>Tu búsqueda</h2>
                     <div class="form-group">
-                        <label>Tipo de Propiedad (Múltiple)</label>
+                        <label>Tipo de Propiedad</label>
                         <div class="selection-grid">
                             <div class="selection-card" onclick="toggleCheckbox(this, 'apartment')">
                                 <i class="far fa-building"></i> <span>Piso</span>
@@ -368,27 +453,42 @@
                             </select>
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label>Notas Adicionales</label>
+                        <div class="input-wrapper">
+                            <textarea id="notes" rows="3" placeholder="¿Algo más que debamos saber?"></textarea>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="step-content">
                     <div style="text-align: center; margin-top: 20px;">
-                        <div class="score-circle"><span id="final-score">0</span></div>
-                        <h2 style="margin-bottom:10px;">¡Recibido!</h2>
-                        <div id="final-category-badge" class="category-badge">Calculando...</div>
-                        <p style="color:var(--text-secondary); line-height:1.5; margin-bottom:20px;" id="results-message">
-                            Procesando datos...
+                        <i class="fas fa-check-circle success-icon"></i>
+                        <h2 style="margin-bottom:10px;">¡Datos Confirmados!</h2>
+                        <p style="color:var(--text-secondary); line-height:1.5; margin-bottom:20px;">
+                            Por favor revisa que toda la información sea correcta antes de confirmar.
                         </p>
                     </div>
 
-                    <div class="summary-grid">
-                        <div class="summary-row"><span class="summary-label">Cliente</span><span class="summary-val" id="summary-name">-</span></div>
-                        <div class="summary-row"><span class="summary-label">Presupuesto</span><span class="summary-val" id="summary-budget">-</span></div>
-                        <div class="summary-row"><span class="summary-label">Operación</span><span class="summary-val" id="summary-operation">-</span></div>
-                        <div class="summary-row"><span class="summary-label">Referencia</span><span class="summary-val" style="font-family:monospace;" id="summary-reference">-</span></div>
+                    <div class="detailed-summary">
+                        <h3 class="section-title">Datos Personales</h3>
+                        <div class="summary-item"><span class="s-label">Nombre</span><span class="s-value" id="res-name">-</span></div>
+                        <div class="summary-item"><span class="s-label">Email</span><span class="s-value" id="res-email" style="font-size:0.85rem; word-break:break-all;">-</span></div>
+                        <div class="summary-item"><span class="s-label">Teléfono</span><span class="s-value" id="res-phone">-</span></div>
+                        
+                        <h3 class="section-title">Preferencias</h3>
+                        <div class="summary-item"><span class="s-label">Operación</span><span class="s-value" id="res-operation">-</span></div>
+                        <div class="summary-item"><span class="s-label">Presupuesto</span><span class="s-value" id="res-budget">-</span></div>
+                        <div class="summary-item"><span class="s-label">Propiedades</span><span class="s-value" id="res-type">-</span></div>
+                        
+                        <h3 class="section-title">Cita</h3>
+                        <div class="summary-item"><span class="s-label">Día</span><span class="s-value" id="res-day">-</span></div>
+                        <div class="summary-item"><span class="s-label">Horario</span><span class="s-value" id="res-time">-</span></div>
                     </div>
                     
-                    <div style="margin-top: 30px; text-align: center;">
-                        <p style="font-size: 0.8rem; color: #999;">Datos listos para enviar a Supabase.</p>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <p style="font-size: 0.8rem; color: #999;">Al confirmar, tus datos serán enviados de forma segura.</p>
                     </div>
                 </div>
 
@@ -398,7 +498,7 @@
         <footer>
             <button class="btn btn-secondary" id="btn-prev" onclick="prevStep()" style="opacity:0; pointer-events:none;"><i class="fas fa-arrow-left"></i></button>
             <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Continuar</button>
-            <button class="btn btn-success" id="btn-submit" onclick="submitToSupabase()" style="display:none;">Confirmar</button>
+            <button class="btn btn-success" id="btn-submit" onclick="submitToSupabase()" style="display:none;">Enviar Solicitud</button>
         </footer>
     </div>
 
@@ -406,13 +506,12 @@
         // --- ESTADO GLOBAL ---
         let currentStep = 1;
         const totalSteps = 5;
-        // Objeto que guardará todos los datos
         let formData = {
             name: '', email: '', phone: '', location: '', source: '',
             propertyTypes: [], operation: '', bedrooms: '', budget: 250000,
             urgency: '', financing: '', investment: '', previousVisits: '',
-            visitType: '', visitDay: '', preferredTime: '',
-            score: 0, category: ''
+            visitType: '', visitDay: '', preferredTime: '', notes: '',
+            score: 0, category: '' // Se calcula pero no se muestra
         };
 
         // --- INICIALIZACIÓN ---
@@ -428,6 +527,10 @@
                 formData.budget = val;
             });
         });
+
+        function startApp() {
+            document.getElementById('landing-page').classList.add('hidden');
+        }
 
         // --- NAVEGACIÓN ---
         function updateUI() {
@@ -454,15 +557,9 @@
             }
 
             if (currentStep === totalSteps) {
-                // Estamos en el resumen
                 btnNext.style.display = 'none';
                 btnSubmit.style.display = 'flex';
                 btnSubmit.style.flex = '1';
-                btnPrev.style.display = 'none'; // Ocultar atrás en el paso final para limpieza visual
-            } else if (currentStep === totalSteps - 1) {
-                // Paso previo al resumen
-                btnNext.style.display = 'flex';
-                btnSubmit.style.display = 'none';
             } else {
                 btnNext.style.display = 'flex';
                 btnSubmit.style.display = 'none';
@@ -471,10 +568,10 @@
 
         function nextStep() {
             if (validateStep(currentStep)) {
-                // Si vamos al paso 5, forzamos la recolección de datos
                 if (currentStep === 4) {
-                    gatherFormData(); // <--- CLAVE PARA CORREGIR EL ERROR
-                    calculateAndShowSummary();
+                    gatherFormData();
+                    calculateScore(); // Calculamos internamente
+                    renderSummary();  // Mostramos datos detallados sin score
                 }
                 currentStep++;
                 updateUI();
@@ -501,11 +598,8 @@
         function selectRadio(element, group, value) {
             document.querySelectorAll(`.radio-option[data-group="${group}"]`).forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
-            
-            // Actualizar inputs ocultos para validación
             document.getElementById(`selected-${group}`).value = value;
             
-            // Guardar en formData
             if (group === 'operation') formData.operation = value;
             if (group === 'financing') formData.financing = value;
             if (group === 'investment') formData.investment = value;
@@ -519,9 +613,8 @@
             formData.urgency = level;
         }
 
-        // --- RECOLECCIÓN DE DATOS (LA SOLUCIÓN AL BUG) ---
+        // --- RECOLECCIÓN DE DATOS ---
         function gatherFormData() {
-            // Forzamos la lectura del DOM para asegurar que no falte nada
             formData.name = document.getElementById('name').value;
             formData.email = document.getElementById('email').value;
             formData.phone = document.getElementById('phone').value;
@@ -530,81 +623,68 @@
             formData.bedrooms = document.getElementById('bedrooms').value;
             formData.previousVisits = document.getElementById('previous-visits').value;
             formData.preferredTime = document.getElementById('preferred-time').value;
+            formData.notes = document.getElementById('notes').value;
             
-            // Los radios y checkboxes ya se actualizan en sus funciones onclick, 
-            // pero hacemos backup de los hidden inputs por si acaso
             if(!formData.operation) formData.operation = document.getElementById('selected-operation').value;
             if(!formData.financing) formData.financing = document.getElementById('selected-financing').value;
             if(!formData.urgency) formData.urgency = document.getElementById('urgency').value;
         }
 
-        // --- LÓGICA DE SCORE Y RESUMEN ---
-        function calculateAndShowSummary() {
+        // --- LÓGICA DE SCORE (INTERNA) ---
+        function calculateScore() {
             let score = 0;
-
-            // 1. Presupuesto
             if (formData.budget >= 300000) score += 25;
             else if (formData.budget >= 150000) score += 20;
             else score += 10;
-
-            // 2. Urgencia
             if (formData.urgency === 'high') score += 20;
             else if (formData.urgency === 'medium') score += 15;
             else score += 5;
-
-            // 3. Financiamiento
             if (formData.financing === 'approved' || formData.financing === 'cash') score += 25;
             else if (formData.financing === 'process') score += 15;
             else score += 5;
-
-            // 4. Operación
-            if (formData.operation === 'buy') score += 10;
-            else score += 8;
-
-            // 5. Visitas
-            if (formData.previousVisits === 'many') score += 10;
-            else score += 5;
-
-            // Bonificación por rellenar todo
+            if (formData.operation === 'buy') score += 10; else score += 8;
+            if (formData.previousVisits === 'many') score += 10; else score += 5;
             if (formData.visitDay && formData.visitType) score += 5;
 
             formData.score = Math.min(score, 100);
-
-            // --- ACTUALIZAR DOM DEL PASO 5 ---
-            document.getElementById('final-score').innerText = formData.score;
-            document.getElementById('summary-name').innerText = formData.name || "Usuario";
-            document.getElementById('summary-budget').innerText = `€${formData.budget.toLocaleString()}`;
             
-            let opText = "Indefinido";
-            if(formData.operation === 'buy') opText = "Compra";
-            if(formData.operation === 'rent') opText = "Alquiler";
-            if(formData.operation === 'not-sure') opText = "Duda";
-            document.getElementById('summary-operation').innerText = opText;
-
-            document.getElementById('summary-reference').innerText = `REF-${Math.floor(Math.random()*10000)}`;
-
-            // Categoría
-            const badge = document.getElementById('final-category-badge');
-            const msg = document.getElementById('results-message');
+            if (score >= 70) formData.category = 'hot';
+            else if (score >= 40) formData.category = 'warm';
+            else formData.category = 'cold';
             
-            badge.classList.remove('hot', 'warm', 'cold');
+            console.log("Score calculado internamente:", formData.score, formData.category);
+        }
+
+        // --- RENDERIZADO DEL RESUMEN (SIN SCORE) ---
+        function renderSummary() {
+            document.getElementById('res-name').innerText = formData.name || "-";
+            document.getElementById('res-email').innerText = formData.email || "-";
+            document.getElementById('res-phone').innerText = formData.phone || "-";
             
-            if (score >= 70) {
-                badge.textContent = "HOT LEAD 🔥";
-                badge.classList.add('hot');
-                msg.innerHTML = "Prioridad Alta. Contactar en < 2 horas.";
-                formData.category = 'hot';
-            } else if (score >= 40) {
-                badge.textContent = "WARM LEAD 🌤";
-                badge.classList.add('warm');
-                msg.innerHTML = "Interés medio. Contactar en 24h.";
-                formData.category = 'warm';
-            } else {
-                badge.textContent = "COLD LEAD ❄️";
-                badge.classList.add('cold');
-                msg.innerHTML = "Nutrición por email requerida.";
-                formData.category = 'cold';
-            }
+            // Operación
+            let opText = formData.operation === 'buy' ? 'Compra' : (formData.operation === 'rent' ? 'Alquiler' : 'No definido');
+            document.getElementById('res-operation').innerText = opText;
+            
+            document.getElementById('res-budget').innerText = `€${formData.budget.toLocaleString()}`;
+            
+            // Tipos de propiedad (formateado)
+            let types = formData.propertyTypes.map(t => {
+                if(t==='apartment') return 'Piso';
+                if(t==='house') return 'Casa';
+                if(t==='penthouse') return 'Ático';
+                if(t==='commercial') return 'Local';
+                return t;
+            }).join(', ');
+            document.getElementById('res-type').innerText = types || "Cualquiera";
+            
+            // Fecha
+            let dateObj = new Date(formData.visitDay);
+            let dateStr = dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+            document.getElementById('res-day').innerText = formData.visitDay ? dateStr : "-";
+            
+            // Hora
+            let timeMap = { 'morning': 'Mañana', 'afternoon': 'Tarde', 'flexible': 'Indiferente' };
+            document.getElementById('res-time').innerText = timeMap[formData.preferredTime] || "-";
         }
 
         // --- VALIDACIONES ---
@@ -667,18 +747,19 @@
             }
         }
 
-        // --- ENVÍO FINAL (PREPARADO PARA SUPABASE) ---
+        // --- ENVÍO FINAL ---
         function submitToSupabase() {
             const btn = document.getElementById('btn-submit');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             
-            console.log("Datos listos para enviar a Supabase:", formData);
+            // En una app real, aquí enviarías formData (que incluye el score oculto) a tu backend
+            console.log("PAYLOAD FINAL PARA DB:", formData);
             
-            // SIMULACIÓN DE ÉXITO
             setTimeout(() => {
                 btn.innerHTML = '<i class="fas fa-check"></i> Enviado';
                 btn.style.background = "#34C759";
-                alert("¡Lead guardado correctamente! (Revisa la consola para ver el JSON)");
+                alert("¡Gracias! Un asesor te contactará pronto.");
+                // Opcional: Recargar página o mostrar mensaje final
             }, 1500);
         }
     </script>
