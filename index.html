@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LeadQualify Pro - iOS Style</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
-        /* --- ESTILOS VISUALES (MISMOS QUE TU ORIGINAL) --- */
+        /* --- ESTILOS VISUALES --- */
         :root {
             --bg-color: #F2F2F7; --card-bg: #FFFFFF; --text-primary: #000000;
             --text-secondary: #8E8E93; --accent: #000000; --danger: #FF3B30;
@@ -131,7 +133,7 @@
                     </div>
                     <div class="form-group">
                         <label>Teléfono Móvil</label>
-                        <div class="input-wrapper"><input type="tel" id="phone" placeholder="+34 600 000 000"></div>
+                        <div class="input-wrapper"><input type="tel" id="phone" placeholder="+58 412 000 000"></div>
                     </div>
                     <div class="form-group">
                         <label>Ubicación Actual</label>
@@ -197,8 +199,8 @@
                     <div class="form-group">
                         <label>Presupuesto Máximo</label>
                         <div class="budget-container">
-                            <div class="budget-display">€<span id="budget-value">250.000</span></div>
-                            <input type="range" id="budget" min="50000" max="1000000" step="5000" value="250000">
+                            <div class="budget-display">$<span id="budget-value">250.000</span></div>
+                            <input type="range" id="budget" min="10000" max="1000000" step="5000" value="250000">
                         </div>
                     </div>
 
@@ -339,8 +341,11 @@
         // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = 'https://vnbbilbugqangnkdhdmz.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuYmJpbGJ1Z3Fhbmdua2RoZG16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTYxMzgsImV4cCI6MjA4NTk5MjEzOH0.eA4bMQS8TzwHcD9NUjg3ftGrqC4XI0cxI5-Lsw1vSHo';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // CORRECCIÓN: Usamos 'supabaseClient' en lugar de 'supabase' para evitar conflicto
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // ESTADO
         let currentStep = 1;
         const totalSteps = 5;
         let formData = {
@@ -351,9 +356,12 @@
             score: 0, category: ''
         };
 
+        // INICIALIZACIÓN
         document.addEventListener('DOMContentLoaded', () => {
             updateUI();
             generateCalendar();
+            
+            // Slider
             const slider = document.getElementById('budget');
             slider.addEventListener('input', (e) => {
                 const val = parseInt(e.target.value);
@@ -362,7 +370,10 @@
             });
         });
 
-        function startApp() { document.getElementById('landing-page').classList.add('hidden'); }
+        // FUNCIONES DE NAVEGACIÓN
+        function startApp() {
+            document.getElementById('landing-page').classList.add('hidden');
+        }
 
         function updateUI() {
             const percentage = (currentStep / totalSteps) * 100;
@@ -403,6 +414,7 @@
             if (currentStep > 1) { currentStep--; updateUI(); }
         }
 
+        // FUNCIONES DE INTERFAZ
         function toggleCheckbox(element, value) {
             element.classList.toggle('selected');
             if (element.classList.contains('selected')) {
@@ -478,7 +490,7 @@
             
             let opText = formData.operation === 'buy' ? 'Compra' : (formData.operation === 'rent' ? 'Alquiler' : 'No definido');
             document.getElementById('res-operation').innerText = opText;
-            document.getElementById('res-budget').innerText = `€${formData.budget.toLocaleString()}`;
+            document.getElementById('res-budget').innerText = `$${formData.budget.toLocaleString()}`;
             
             let types = formData.propertyTypes.map(t => {
                 if(t==='apartment') return 'Piso';
@@ -559,7 +571,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             btn.style.pointerEvents = 'none';
 
-            // Preparar objeto para SQL (snake_case)
             const dbPayload = {
                 name: formData.name,
                 email: formData.email,
@@ -582,11 +593,12 @@
                 category: formData.category
             };
 
-            const { data, error } = await supabase.from('leads').insert([dbPayload]);
+            // Usamos la nueva variable supabaseClient
+            const { data, error } = await supabaseClient.from('leads').insert([dbPayload]);
 
             if (error) {
                 console.error('Error Supabase:', error);
-                showToast('Error al enviar. Intenta de nuevo.');
+                showToast('Error al enviar: ' + error.message);
                 btn.innerHTML = 'Reintentar';
                 btn.style.pointerEvents = 'auto';
             } else {
@@ -595,7 +607,7 @@
                 
                 setTimeout(() => {
                     alert("¡Gracias! Hemos recibido tu solicitud correctamente.");
-                    location.reload(); // Recargar formulario
+                    location.reload(); 
                 }, 1000);
             }
         }
