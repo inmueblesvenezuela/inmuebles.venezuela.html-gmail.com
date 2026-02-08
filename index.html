@@ -5,252 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LeadQualify Pro - iOS Style</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* --- ESTILOS VISUALES (IOS DESIGN) --- */
+        /* --- ESTILOS VISUALES (MISMOS QUE TU ORIGINAL) --- */
         :root {
-            --bg-color: #F2F2F7;
-            --card-bg: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #8E8E93;
-            --accent: #000000;
-            --danger: #FF3B30;
-            --success: #34C759;
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            --anim-speed: 0.4s;
+            --bg-color: #F2F2F7; --card-bg: #FFFFFF; --text-primary: #000000;
+            --text-secondary: #8E8E93; --accent: #000000; --danger: #FF3B30;
+            --success: #34C759; --radius-lg: 24px; --radius-md: 16px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08); --anim-speed: 0.4s;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* --- PORTADA (LANDING) --- */
-        .landing-page {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 500;
-            background-color: #000;
-            transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-primary); height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
         
-        .landing-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1600596542815-22b4c10e6bf5?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.7;
-        }
-
-        .landing-content {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 40px 30px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
-        }
-
-        .landing-title {
-            color: white;
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 10px;
-            animation: slideUp 0.8s ease;
-        }
-
-        .landing-subtitle {
-            color: rgba(255,255,255,0.8);
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-            animation: slideUp 0.8s ease 0.1s backwards;
-        }
-
-        .start-btn {
-            background: white;
-            color: black;
-            border: none;
-            height: 60px;
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: transform 0.2s;
-            animation: slideUp 0.8s ease 0.2s backwards;
-        }
-        
+        /* LANDING */
+        .landing-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background-color: #000; transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1); }
+        .landing-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://images.unsplash.com/photo-1600596542815-22b4c10e6bf5?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; opacity: 0.7; }
+        .landing-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 30px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%); }
+        .landing-title { color: white; font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; animation: slideUp 0.8s ease; }
+        .landing-subtitle { color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 40px; animation: slideUp 0.8s ease 0.1s backwards; }
+        .start-btn { background: white; color: black; border: none; height: 60px; border-radius: 30px; font-size: 1.2rem; font-weight: 700; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.2s; animation: slideUp 0.8s ease 0.2s backwards; }
         .start-btn:active { transform: scale(0.95); }
+        .landing-page.hidden { transform: translateY(-100%); }
 
-        .landing-page.hidden {
-            transform: translateY(-100%);
-        }
-
-        /* --- APP CONTAINER --- */
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-            height: 100%;
-            background-color: var(--bg-color);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
-        }
-
-        /* HEADER */
-        header {
-            padding: 20px 24px 10px;
-            background: rgba(242, 242, 247, 0.9);
-            backdrop-filter: blur(20px);
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
+        /* APP */
+        .app-container { width: 100%; max-width: 500px; height: 100%; background-color: var(--bg-color); position: relative; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
+        header { padding: 20px 24px 10px; background: rgba(242, 242, 247, 0.9); backdrop-filter: blur(20px); z-index: 100; flex-shrink: 0; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .logo { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .progress-container { height: 4px; background: #E5E5EA; border-radius: 2px; width: 100%; overflow: hidden; margin-top: 10px; }
         .progress-bar { height: 100%; background: var(--accent); width: 20%; transition: width var(--anim-speed) ease; border-radius: 2px; }
         .step-indicator { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-top: 5px; text-align: right; }
-
-        /* MAIN CONTENT */
         main { flex: 1; position: relative; overflow: hidden; }
         .steps-wrapper { display: flex; width: 500%; height: 100%; transition: transform var(--anim-speed) cubic-bezier(0.25, 1, 0.5, 1); }
-        .step-content { 
-            width: 20%; height: 100%; padding: 10px 24px 120px 24px; 
-            overflow-y: auto; overflow-x: hidden; scrollbar-width: none; 
-        }
+        .step-content { width: 20%; height: 100%; padding: 10px 24px 120px 24px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
         .step-content::-webkit-scrollbar { display: none; }
-
         h2 { font-size: 1.8rem; margin-bottom: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); }
         h3.section-title { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; margin: 20px 0 10px; letter-spacing: 1px; font-weight: 700; border-bottom: 1px solid #e5e5ea; padding-bottom: 5px;}
-
-        /* INPUTS & FORMS */
         .form-group { margin-bottom: 24px; animation: fadeIn 0.5s ease; }
         label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .input-wrapper {
-            background: var(--card-bg); border-radius: var(--radius-md); padding: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: transform 0.2s; display: flex; align-items: center;
-        }
+        .input-wrapper { background: var(--card-bg); border-radius: var(--radius-md); padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: transform 0.2s; display: flex; align-items: center; }
         .input-wrapper:focus-within { transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-        
-        input[type="text"], input[type="email"], input[type="tel"], select, textarea {
-            width: 100%; border: none; background: transparent; font-size: 1.1rem; color: var(--text-primary); outline: none;
-        }
+        input[type="text"], input[type="email"], input[type="tel"], select, textarea { width: 100%; border: none; background: transparent; font-size: 1.1rem; color: var(--text-primary); outline: none; }
         textarea { resize: none; }
-
-        /* CARDS SELECTION */
         .selection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .selection-card {
-            background: var(--card-bg); border-radius: var(--radius-md); padding: 16px; text-align: center; cursor: pointer;
-            border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .selection-card { background: var(--card-bg); border-radius: var(--radius-md); padding: 16px; text-align: center; cursor: pointer; border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .selection-card.selected { background: var(--accent); color: white; border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .selection-card i { font-size: 1.5rem; margin-bottom: 8px; display: block; }
         .selection-card span { font-weight: 600; font-size: 0.95rem; }
-
-        /* SLIDER */
         .budget-container { background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--shadow); }
         .budget-display { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
         input[type="range"] { width: 100%; -webkit-appearance: none; height: 6px; background: #E5E5EA; border-radius: 3px; outline: none; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; background: var(--accent); border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-
-        /* URGENCY */
         .urgency-stack { display: flex; flex-direction: column; gap: 10px; }
-        .urgency-option {
-            padding: 18px; background: var(--card-bg); border-radius: var(--radius-md); font-weight: 600;
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s;
-        }
+        .urgency-option { padding: 18px; background: var(--card-bg); border-radius: var(--radius-md); font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
         .urgency-option.selected { background: var(--text-primary); color: white; }
         .urgency-option.high.selected { background: #FF3B30; }
         .urgency-option.medium.selected { background: #FF9500; }
         .urgency-option.low.selected { background: #34C759; }
-
-        /* CALENDAR */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; background: var(--card-bg); padding: 16px; border-radius: var(--radius-lg); }
         .cal-head { font-size: 0.75rem; text-align: center; color: var(--text-secondary); font-weight: 700; margin-bottom: 8px; }
-        .cal-day {
-            aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 50%; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: 0.2s;
-        }
+        .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
         .cal-day:hover { background: #F2F2F7; }
         .cal-day.today { color: var(--accent); font-weight: 800; }
         .cal-day.selected { background: var(--accent); color: white; font-weight: 700; }
         .cal-day.disabled { opacity: 0.3; pointer-events: none; }
-
-        /* FOOTER */
-        footer {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px 24px;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(0,0,0,0.05); display: flex; gap: 15px; z-index: 200;
-        }
-        .btn {
-            flex: 1; height: 56px; border: none; border-radius: 28px; font-size: 1rem; font-weight: 600;
-            cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px 24px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); display: flex; gap: 15px; z-index: 200; }
+        .btn { flex: 1; height: 56px; border: none; border-radius: 28px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn:active { transform: scale(0.96); }
         .btn-secondary { background: #E5E5EA; color: var(--text-primary); flex: 0.4; }
         .btn-primary { background: var(--accent); color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .btn-success { background: var(--success); color: white; }
-
-        /* RESULTS & SUMMARY (REDISENADO) */
-        .success-icon {
-            font-size: 4rem; color: var(--success); margin-bottom: 20px; display: block;
-        }
-        
-        .detailed-summary {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.95rem;
-        }
+        .success-icon { font-size: 4rem; color: var(--success); margin-bottom: 20px; display: block; }
+        .detailed-summary { background: white; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
         .summary-item:last-child { border-bottom: none; }
         .s-label { color: var(--text-secondary); font-weight: 500; }
         .s-value { font-weight: 600; color: var(--text-primary); text-align: right; max-width: 60%; }
-
-        /* TOAST ERROR */
-        .error-toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: rgba(255, 59, 48, 0.9); color: white; padding: 12px 24px; border-radius: 30px;
-            font-weight: 600; box-shadow: 0 10px 20px rgba(255, 59, 48, 0.3); transition: transform 0.4s;
-            z-index: 1000; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; width: 90%; max-width: 400px; justify-content: center;
-        }
+        .error-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: rgba(255, 59, 48, 0.9); color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; box-shadow: 0 10px 20px rgba(255, 59, 48, 0.3); transition: transform 0.4s; z-index: 1000; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; width: 90%; max-width: 400px; justify-content: center; }
         .error-toast.show { transform: translateX(-50%) translateY(0); }
-
         input[type="radio"], input[type="checkbox"] { display: none; }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -503,7 +336,11 @@
     </div>
 
     <script>
-        // --- ESTADO GLOBAL ---
+        // CONFIGURACIÓN SUPABASE
+        const SUPABASE_URL = 'https://vnbbilbugqangnkdhdmz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuYmJpbGJ1Z3Fhbmdua2RoZG16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTYxMzgsImV4cCI6MjA4NTk5MjEzOH0.eA4bMQS8TzwHcD9NUjg3ftGrqC4XI0cxI5-Lsw1vSHo';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let currentStep = 1;
         const totalSteps = 5;
         let formData = {
@@ -511,15 +348,12 @@
             propertyTypes: [], operation: '', bedrooms: '', budget: 250000,
             urgency: '', financing: '', investment: '', previousVisits: '',
             visitType: '', visitDay: '', preferredTime: '', notes: '',
-            score: 0, category: '' // Se calcula pero no se muestra
+            score: 0, category: ''
         };
 
-        // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
             updateUI();
             generateCalendar();
-            
-            // Listener slider
             const slider = document.getElementById('budget');
             slider.addEventListener('input', (e) => {
                 const val = parseInt(e.target.value);
@@ -528,33 +362,20 @@
             });
         });
 
-        function startApp() {
-            document.getElementById('landing-page').classList.add('hidden');
-        }
+        function startApp() { document.getElementById('landing-page').classList.add('hidden'); }
 
-        // --- NAVEGACIÓN ---
         function updateUI() {
-            // Progreso
             const percentage = (currentStep / totalSteps) * 100;
             document.getElementById('progress-bar').style.width = `${percentage}%`;
             document.getElementById('step-num').textContent = currentStep;
+            document.getElementById('steps-wrapper').style.transform = `translateX(-${(currentStep - 1) * 20}%)`;
 
-            // Deslizamiento
-            const wrapper = document.getElementById('steps-wrapper');
-            wrapper.style.transform = `translateX(-${(currentStep - 1) * 20}%)`;
-
-            // Botones
             const btnPrev = document.getElementById('btn-prev');
             const btnNext = document.getElementById('btn-next');
             const btnSubmit = document.getElementById('btn-submit');
 
-            if (currentStep === 1) {
-                btnPrev.style.opacity = '0';
-                btnPrev.style.pointerEvents = 'none';
-            } else {
-                btnPrev.style.opacity = '1';
-                btnPrev.style.pointerEvents = 'auto';
-            }
+            btnPrev.style.opacity = currentStep === 1 ? '0' : '1';
+            btnPrev.style.pointerEvents = currentStep === 1 ? 'none' : 'auto';
 
             if (currentStep === totalSteps) {
                 btnNext.style.display = 'none';
@@ -570,8 +391,8 @@
             if (validateStep(currentStep)) {
                 if (currentStep === 4) {
                     gatherFormData();
-                    calculateScore(); // Calculamos internamente
-                    renderSummary();  // Mostramos datos detallados sin score
+                    calculateScore();
+                    renderSummary();
                 }
                 currentStep++;
                 updateUI();
@@ -579,13 +400,9 @@
         }
 
         function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                updateUI();
-            }
+            if (currentStep > 1) { currentStep--; updateUI(); }
         }
 
-        // --- FUNCIONES INTERACTIVAS ---
         function toggleCheckbox(element, value) {
             element.classList.toggle('selected');
             if (element.classList.contains('selected')) {
@@ -599,7 +416,6 @@
             document.querySelectorAll(`.radio-option[data-group="${group}"]`).forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
             document.getElementById(`selected-${group}`).value = value;
-            
             if (group === 'operation') formData.operation = value;
             if (group === 'financing') formData.financing = value;
             if (group === 'investment') formData.investment = value;
@@ -613,11 +429,11 @@
             formData.urgency = level;
         }
 
-        // --- RECOLECCIÓN DE DATOS ---
         function gatherFormData() {
             formData.name = document.getElementById('name').value;
             formData.email = document.getElementById('email').value;
             formData.phone = document.getElementById('phone').value;
+            formData.location = document.getElementById('location').value;
             formData.source = document.getElementById('source').value;
             formData.budget = parseInt(document.getElementById('budget').value) || 0;
             formData.bedrooms = document.getElementById('bedrooms').value;
@@ -630,18 +446,20 @@
             if(!formData.urgency) formData.urgency = document.getElementById('urgency').value;
         }
 
-        // --- LÓGICA DE SCORE (INTERNA) ---
         function calculateScore() {
             let score = 0;
             if (formData.budget >= 300000) score += 25;
             else if (formData.budget >= 150000) score += 20;
             else score += 10;
+            
             if (formData.urgency === 'high') score += 20;
             else if (formData.urgency === 'medium') score += 15;
             else score += 5;
+            
             if (formData.financing === 'approved' || formData.financing === 'cash') score += 25;
             else if (formData.financing === 'process') score += 15;
             else score += 5;
+            
             if (formData.operation === 'buy') score += 10; else score += 8;
             if (formData.previousVisits === 'many') score += 10; else score += 5;
             if (formData.visitDay && formData.visitType) score += 5;
@@ -651,23 +469,17 @@
             if (score >= 70) formData.category = 'hot';
             else if (score >= 40) formData.category = 'warm';
             else formData.category = 'cold';
-            
-            console.log("Score calculado internamente:", formData.score, formData.category);
         }
 
-        // --- RENDERIZADO DEL RESUMEN (SIN SCORE) ---
         function renderSummary() {
             document.getElementById('res-name').innerText = formData.name || "-";
             document.getElementById('res-email').innerText = formData.email || "-";
             document.getElementById('res-phone').innerText = formData.phone || "-";
             
-            // Operación
             let opText = formData.operation === 'buy' ? 'Compra' : (formData.operation === 'rent' ? 'Alquiler' : 'No definido');
             document.getElementById('res-operation').innerText = opText;
-            
             document.getElementById('res-budget').innerText = `€${formData.budget.toLocaleString()}`;
             
-            // Tipos de propiedad (formateado)
             let types = formData.propertyTypes.map(t => {
                 if(t==='apartment') return 'Piso';
                 if(t==='house') return 'Casa';
@@ -677,17 +489,14 @@
             }).join(', ');
             document.getElementById('res-type').innerText = types || "Cualquiera";
             
-            // Fecha
             let dateObj = new Date(formData.visitDay);
-            let dateStr = dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-            document.getElementById('res-day').innerText = formData.visitDay ? dateStr : "-";
+            let dateStr = formData.visitDay ? dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) : "-";
+            document.getElementById('res-day').innerText = dateStr;
             
-            // Hora
             let timeMap = { 'morning': 'Mañana', 'afternoon': 'Tarde', 'flexible': 'Indiferente' };
             document.getElementById('res-time').innerText = timeMap[formData.preferredTime] || "-";
         }
 
-        // --- VALIDACIONES ---
         function showToast(msg) {
             const toast = document.getElementById('error-toast');
             document.getElementById('error-msg').textContent = msg;
@@ -720,7 +529,6 @@
             return true;
         }
 
-        // --- CALENDARIO ---
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
             const days = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
@@ -733,7 +541,6 @@
                 const dayEl = document.createElement('div');
                 dayEl.className = 'cal-day';
                 dayEl.textContent = date.getDate();
-                
                 if (i === 0) dayEl.classList.add('today');
                 if (date.getDay() === 0) { dayEl.classList.add('disabled'); }
                 else {
@@ -747,20 +554,50 @@
             }
         }
 
-        // --- ENVÍO FINAL ---
-        function submitToSupabase() {
+        async function submitToSupabase() {
             const btn = document.getElementById('btn-submit');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-            
-            // En una app real, aquí enviarías formData (que incluye el score oculto) a tu backend
-            console.log("PAYLOAD FINAL PARA DB:", formData);
-            
-            setTimeout(() => {
+            btn.style.pointerEvents = 'none';
+
+            // Preparar objeto para SQL (snake_case)
+            const dbPayload = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                location: formData.location,
+                source: formData.source,
+                property_types: JSON.stringify(formData.propertyTypes),
+                operation: formData.operation,
+                bedrooms: formData.bedrooms,
+                budget: formData.budget,
+                urgency: formData.urgency,
+                financing: formData.financing,
+                investment: formData.investment,
+                previous_visits: formData.previousVisits,
+                visit_type: formData.visitType,
+                visit_day: formData.visitDay,
+                preferred_time: formData.preferredTime,
+                notes: formData.notes,
+                score: formData.score,
+                category: formData.category
+            };
+
+            const { data, error } = await supabase.from('leads').insert([dbPayload]);
+
+            if (error) {
+                console.error('Error Supabase:', error);
+                showToast('Error al enviar. Intenta de nuevo.');
+                btn.innerHTML = 'Reintentar';
+                btn.style.pointerEvents = 'auto';
+            } else {
                 btn.innerHTML = '<i class="fas fa-check"></i> Enviado';
                 btn.style.background = "#34C759";
-                alert("¡Gracias! Un asesor te contactará pronto.");
-                // Opcional: Recargar página o mostrar mensaje final
-            }, 1500);
+                
+                setTimeout(() => {
+                    alert("¡Gracias! Hemos recibido tu solicitud correctamente.");
+                    location.reload(); // Recargar formulario
+                }, 1000);
+            }
         }
     </script>
 </body>
