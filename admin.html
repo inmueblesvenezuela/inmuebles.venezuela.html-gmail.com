@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Leads</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --hot: #FF3B30;
+            --warm: #FF9500;
+            --cold: #007AFF;
+            --text-main: #1C1C1E;
+            --text-sub: #8E8E93;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 0; }
+        h1 { font-size: 1.8rem; font-weight: 800; }
+        .refresh-btn { background: white; border: none; width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; color: var(--text-main); transition: 0.2s; }
+        .refresh-btn:hover { transform: scale(1.1); }
+
+        /* TABS */
+        .tabs { display: flex; background: #E5E5EA; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 10px; text-align: center; font-weight: 600; font-size: 0.9rem; cursor: pointer; border-radius: 9px; color: var(--text-sub); transition: 0.2s; }
+        .tab.active { background: white; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* CARDS */
+        .leads-list { display: grid; gap: 16px; }
+        
+        .lead-card {
+            background: var(--card-bg); border-radius: 16px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s;
+            position: relative; overflow: hidden; border-left: 5px solid transparent;
+        }
+        
+        /* Borde de color según temperatura */
+        .lead-card.hot { border-left-color: var(--hot); }
+        .lead-card.warm { border-left-color: var(--warm); }
+        .lead-card.cold { border-left-color: var(--cold); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .lead-name { font-size: 1.2rem; font-weight: 700; }
+        .lead-score { 
+            background: #f0f0f0; padding: 4px 10px; border-radius: 20px; 
+            font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px; 
+        }
+        .lead-score.hot { color: var(--hot); background: rgba(255, 59, 48, 0.1); }
+        .lead-score.warm { color: var(--warm); background: rgba(255, 149, 0, 0.1); }
+        .lead-score.cold { color: var(--cold); background: rgba(0, 122, 255, 0.1); }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-bottom: 20px; }
+        .info-item { font-size: 0.9rem; }
+        .info-item span { display: block; font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; font-weight: 600; }
+        .info-item p { font-weight: 500; }
+
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+        .tag { font-size: 0.75rem; padding: 4px 8px; background: #F2F2F7; border-radius: 6px; color: var(--text-sub); font-weight: 600; }
+
+        .actions { display: flex; gap: 10px; border-top: 1px solid #F2F2F7; padding-top: 15px; }
+        .action-btn { 
+            flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; 
+            font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; 
+        }
+        .btn-whatsapp { background: #25D366; color: white; }
+        .btn-email { background: #007AFF; color: white; }
+        .btn-delete { background: #FF3B30; color: white; width: 40px; flex: none; }
+
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--text-sub); }
+        .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.5; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Admin Leads</h1>
+            <button class="refresh-btn" onclick="fetchLeads()"><i class="fas fa-sync-alt"></i></button>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" onclick="filterLeads('hot', this)">🔥 Calientes</div>
+            <div class="tab" onclick="filterLeads('warm', this)">⚡ Tibios</div>
+            <div class="tab" onclick="filterLeads('cold', this)">❄️ Fríos</div>
+            <div class="tab" onclick="filterLeads('all', this)">Todos</div>
+        </div>
+
+        <div id="leads-container" class="leads-list">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>Cargando leads...</div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://vnbbilbugqangnkdhdmz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuYmJpbGJ1Z3Fhbmdua2RoZG16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTYxMzgsImV4cCI6MjA4NTk5MjEzOH0.eA4bMQS8TzwHcD9NUjg3ftGrqC4XI0cxI5-Lsw1vSHo';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allLeads = [];
+        let currentFilter = 'hot'; // Por defecto mostrar calientes
+
+        async function fetchLeads() {
+            const container = document.getElementById('leads-container');
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>Cargando...</div>';
+
+            const { data, error } = await supabase
+                .from('leads')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = `<div class="empty-state" style="color:red">Error: ${error.message}</div>`;
+                return;
+            }
+
+            allLeads = data;
+            renderLeads();
+        }
+
+        function filterLeads(category, tabElement) {
+            currentFilter = category;
+            
+            // UI Tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tabElement.classList.add('active');
+            
+            renderLeads();
+        }
+
+        function renderLeads() {
+            const container = document.getElementById('leads-container');
+            container.innerHTML = '';
+
+            const filtered = currentFilter === 'all' 
+                ? allLeads 
+                : allLeads.filter(l => l.category === currentFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="far fa-folder-open"></i>
+                        <p>No hay leads en esta categoría.</p>
+                    </div>`;
+                return;
+            }
+
+            filtered.forEach(lead => {
+                const card = document.createElement('div');
+                card.className = `lead-card ${lead.category}`;
+                
+                // Formateo de datos
+                const budget = lead.budget ? `€${lead.budget.toLocaleString()}` : 'N/A';
+                const date = new Date(lead.created_at).toLocaleDateString('es-ES');
+                
+                // Limpiar teléfono para whatsapp
+                const wppPhone = lead.phone ? lead.phone.replace(/[^0-9]/g, '') : '';
+                
+                // Parsear tipos
+                let types = "Varios";
+                try {
+                    const parsed = JSON.parse(lead.property_types);
+                    if(Array.isArray(parsed)) types = parsed.join(', ');
+                } catch(e) { types = lead.property_types; }
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="lead-name">${lead.name}</div>
+                            <small style="color:#8E8E93">${lead.location || 'Sin ubicación'}</small>
+                        </div>
+                        <div class="lead-score ${lead.category}">
+                            ${lead.score}% ${lead.category === 'hot' ? '🔥' : (lead.category === 'warm' ? '⚡' : '❄️')}
+                        </div>
+                    </div>
+
+                    <div class="tags">
+                        <span class="tag"><i class="fas fa-money-bill"></i> ${lead.financing === 'approved' ? 'Aprobado' : (lead.financing === 'cash' ? 'Contado' : 'Trámite')}</span>
+                        <span class="tag"><i class="fas fa-home"></i> ${lead.operation === 'buy' ? 'Compra' : 'Alquiler'}</span>
+                        <span class="tag"><i class="fas fa-calendar"></i> Visita: ${lead.visit_day || 'Pendiente'}</span>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item"><span>Presupuesto</span><p>${budget}</p></div>
+                        <div class="info-item"><span>Búsqueda</span><p>${types}</p></div>
+                        <div class="info-item"><span>Teléfono</span><p>${lead.phone}</p></div>
+                        <div class="info-item"><span>Registrado</span><p>${date}</p></div>
+                    </div>
+                    
+                    ${lead.notes ? `<div style="margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:8px; font-size:0.85rem; color:#555;"><em>"${lead.notes}"</em></div>` : ''}
+
+                    <div class="actions">
+                        <a href="https://wa.me/${wppPhone}?text=Hola ${lead.name}, vi tu interés en una propiedad..." target="_blank" class="action-btn btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="mailto:${lead.email}" class="action-btn btn-email">
+                            <i class="far fa-envelope"></i> Email
+                        </a>
+                        <button onclick="deleteLead(${lead.id})" class="action-btn btn-delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function deleteLead(id) {
+            if(confirm('¿Estás seguro de borrar este lead?')) {
+                const { error } = await supabase.from('leads').delete().eq('id', id);
+                if(!error) {
+                    fetchLeads(); // Recargar
+                } else {
+                    alert('Error al borrar');
+                }
+            }
+        }
+
+        // Cargar al inicio
+        document.addEventListener('DOMContentLoaded', fetchLeads);
+    </script>
+</body>
+</html>
