@@ -100,9 +100,12 @@
     </div>
 
     <script>
+        // --- CONFIGURACIÓN SUPABASE ---
         const SUPABASE_URL = 'https://vnbbilbugqangnkdhdmz.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuYmJpbGJ1Z3Fhbmdua2RoZG16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTYxMzgsImV4cCI6MjA4NTk5MjEzOH0.eA4bMQS8TzwHcD9NUjg3ftGrqC4XI0cxI5-Lsw1vSHo';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // CAMBIO IMPORTANTE: Usamos 'supabaseClient' para evitar errores de duplicado
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allLeads = [];
         let currentFilter = 'hot'; // Por defecto mostrar calientes
@@ -111,7 +114,8 @@
             const container = document.getElementById('leads-container');
             container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>Cargando...</div>';
 
-            const { data, error } = await supabase
+            // Usamos supabaseClient aquí
+            const { data, error } = await supabaseClient
                 .from('leads')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -157,17 +161,27 @@
                 card.className = `lead-card ${lead.category}`;
                 
                 // Formateo de datos
-                const budget = lead.budget ? `€${lead.budget.toLocaleString()}` : 'N/A';
+                const budget = lead.budget ? `$${lead.budget.toLocaleString()}` : 'N/A';
                 const date = new Date(lead.created_at).toLocaleDateString('es-ES');
                 
                 // Limpiar teléfono para whatsapp
                 const wppPhone = lead.phone ? lead.phone.replace(/[^0-9]/g, '') : '';
                 
-                // Parsear tipos
+                // Parsear tipos (como viene en JSON string, intentamos parsear)
                 let types = "Varios";
                 try {
-                    const parsed = JSON.parse(lead.property_types);
-                    if(Array.isArray(parsed)) types = parsed.join(', ');
+                    // Si ya viene como objeto no parseamos, si es string parseamos
+                    const parsed = typeof lead.property_types === 'string' ? JSON.parse(lead.property_types) : lead.property_types;
+                    if(Array.isArray(parsed)) {
+                        // Traducir tipos
+                        types = parsed.map(t => {
+                            if(t==='apartment') return 'Piso';
+                            if(t==='house') return 'Casa';
+                            if(t==='penthouse') return 'Ático';
+                            if(t==='commercial') return 'Local';
+                            return t;
+                        }).join(', ');
+                    }
                 } catch(e) { types = lead.property_types; }
 
                 card.innerHTML = `
@@ -197,7 +211,7 @@
                     ${lead.notes ? `<div style="margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:8px; font-size:0.85rem; color:#555;"><em>"${lead.notes}"</em></div>` : ''}
 
                     <div class="actions">
-                        <a href="https://wa.me/${wppPhone}?text=Hola ${lead.name}, vi tu interés en una propiedad..." target="_blank" class="action-btn btn-whatsapp">
+                        <a href="https://wa.me/${wppPhone}?text=Hola ${lead.name}, recibí tu solicitud sobre inmuebles..." target="_blank" class="action-btn btn-whatsapp">
                             <i class="fab fa-whatsapp"></i> WhatsApp
                         </a>
                         <a href="mailto:${lead.email}" class="action-btn btn-email">
@@ -214,11 +228,12 @@
 
         async function deleteLead(id) {
             if(confirm('¿Estás seguro de borrar este lead?')) {
-                const { error } = await supabase.from('leads').delete().eq('id', id);
+                // Usamos supabaseClient aquí también
+                const { error } = await supabaseClient.from('leads').delete().eq('id', id);
                 if(!error) {
                     fetchLeads(); // Recargar
                 } else {
-                    alert('Error al borrar');
+                    alert('Error al borrar: ' + error.message);
                 }
             }
         }
